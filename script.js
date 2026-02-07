@@ -65,22 +65,67 @@ const heroes = [
 ];
 
 var grid = document.getElementById("grid");
-var html = "";
-var i = 0;
+var search = document.getElementById("search");
 
-while (i < heroes.length) {
-  html += '<article class="card">';
-  html +=   '<div class="thumb" aria-hidden="true">' + heroes[i].emoji + '</div>';
-  html +=   '<div class="content">';
-  html +=     '<h2 class="name">' + heroes[i].name + '</h2>';
-  html +=     '<div class="tags">';
-  html +=       '<span class="tag">' + heroes[i].universe + '</span>';
-  html +=       '<span class="tag">' + heroes[i].power + '</span>';
-  html +=     '</div>';
-  html +=     '<p class="desc">' + heroes[i].bio + '</p>';
-  html +=   '</div>';
-  html += '</article>';
-  i = i + 1;
+function showList(list) {
+  var html = "";
+  var i = 0;
+
+  if (list.length === 0) {
+    grid.innerHTML = '<p class="desc">No matches found</p>';
+    return;
+  }
+
+  while (i < list.length) {
+    html += '<article class="card">';
+    html += '<div class="thumb" aria-hidden="true">' + list[i].emoji + '</div>';
+    html += '<div class="content">';
+    html += '<h2 class="name">' + list[i].name + '</h2>';
+    html += '<div class="tags">';
+    html += '<span class="tag">' + list[i].universe + '</span>';
+    html += '<span class="tag">' + list[i].power + '</span>';
+    html += '</div>';
+    html += '<p class="desc">' + list[i].bio + '</p>';
+    html += '</div>';
+    html += '</article>';
+    i = i + 1;
+  }
+
+  grid.innerHTML = html;
 }
 
-grid.innerHTML = html;
+function filterList(text) {
+  var q = text.toLowerCase();
+  var results = [];
+  var i = 0;
+
+  while (i < heroes.length) {
+    var h = heroes[i];
+
+    if (
+      h.name.toLowerCase().indexOf(q) !== -1 ||
+      h.power.toLowerCase().indexOf(q) !== -1 ||
+      h.universe.toLowerCase().indexOf(q) !== -1
+    ) {
+      results.push(h);
+    }
+
+    i = i + 1;
+  }
+
+  return results;
+}
+
+if (search) {
+  search.oninput = function () {
+    var q = search.value.trim();
+
+    if (q === "") {
+      showList(heroes);
+    } else {
+      showList(filterList(q));
+    }
+  };
+}
+
+showList(heroes);
